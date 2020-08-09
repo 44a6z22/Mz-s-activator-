@@ -76,7 +76,7 @@ client.on('message', message => {
                                 embed : questionEmbed
                             });
                             
-                            // logic to greeding the user after verifying his/here account.
+                                    // logic to greeding the user after verifying his/here account.
                             let welcomeChannel = user.guild.channels.cache.find(channel => channel.id === '741979115690786889'); 
                             welcomeChannel.send(`Welcome ${user.username} To the server`);
 
