@@ -3,7 +3,7 @@ const discord = require("discord.js");
 
 const client = new discord.Client();
 
-const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.vPCDFY7RVXtCLFuNCdyxGhImH3c"; 
+const token = "your bots token"; 
 
 const PLAYING_WITH = "with";
 
@@ -98,6 +98,7 @@ client.on('message', message => {
                         // display the member's avatar. 
                         let avatarEmbed = {
                             title: "Avatar Link", 
+                            color: "#0095FF",
                             url: author.avatarURL() + "?size=1024",
                             author: {
                                 name: author.username, 
