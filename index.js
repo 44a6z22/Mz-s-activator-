@@ -3,7 +3,7 @@ const discord = require("discord.js");
 
 const client = new discord.Client();
 
-const token = "your bots token"; 
+const token = "bot's token."; 
 
 const PLAYING_WITH = "with";
 
@@ -21,13 +21,26 @@ const ACTIVITY = [
 ]
 
 const INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=740257045260927037&permissions=2147483639&scope=bot";
-
+let auth = thum = foot =  {};
 client.on("ready", message => {
-    console.log("bot is ready.");
+    auth  = {
+        name: client.user.username, 
+        icon_url: client.user.displayAvatarURL(),
+        url: client.user.displayAvatarURL(),
+    };
+    thum = {
+        url : client.user.displayAvatarURL()
+    }; 
+    foot= {
+        text: 'cheers',
+        icon_url: client.user.displayAvatarURL(),
+    };
     // every 20 secounds the bot chenges its activity. 
     setInterval( () => {
         client.user.setActivity(`${PLAYING_WITH} ${ACTIVITY[Math.floor(Math.random() * 10)]}` );
     }, 20000);
+    
+    console.log("bot is ready.");
 });
     
 let user = {
@@ -36,6 +49,8 @@ let user = {
     randomNumbers : [],
     intendedReply: 0,
 }
+
+
 
 client.on('message', message => {
     let channel = message.channel, 
@@ -56,7 +71,8 @@ client.on('message', message => {
                             member.roles.add(role);
 
                             let questionEmbed = {
-                                title : 'Verification complete', 
+                                title : 'Verification complete',
+                                color: "#00FFEE", 
                                 author: {
                                     name: client.user.username, 
                                     icon_url: client.user.displayAvatarURL(), 
@@ -172,11 +188,7 @@ client.on('message', message => {
         
                     let questionEmbed = {
                         title : 'Verification Test', 
-                        author: {
-                            name: client.user.username, 
-                            icon_url: client.user.displayAvatarURL(), 
-                            url: client.user.displayAvatarURL(),
-                        }, 
+                        author: auth, 
                         description: "please answer the question so we make sure you're not a robot .",
                         thumbnail: {
                             url: client.user.displayAvatarURL()
@@ -192,10 +204,7 @@ client.on('message', message => {
                             }
                         ], 
                         timestamp: new Date(),
-                        footer: {
-                            text: 'cheers',
-                            icon_url: client.user.displayAvatarURL(),
-                        },
+                        footer: foot
                     }
                     message.author.send({
                         embed : questionEmbed
@@ -223,11 +232,7 @@ client.on('message', message => {
                         color: '#0099ff',
                         title: "Roles list.",
                         description: "Here is the List of roles on this server.", 
-                        author : {
-                            name: client.user.username, 
-                            icon_url: client.user.displayAvatarURL(),
-                            url: INVITE_LINK,
-                        }, 
+                        author : auth,
                         thumbnail: {
                             url: client.user.displayAvatarURL()
                         }, 
@@ -267,11 +272,7 @@ client.on('message', message => {
                         color: '#0099ff',
                         title: "Members Lists.",
                         description: "Here is the List of Members on this server.", 
-                        author : {
-                            name: client.user.username, 
-                            icon_url: client.user.displayAvatarURL(),
-                            url: INVITE_LINK,
-                        }, 
+                        author : auth, 
                         thumbnail: {
                             url: client.user.displayAvatarURL()
                         }, 
@@ -298,6 +299,33 @@ client.on('message', message => {
                     })
                     break ; 
                    
+                case "+commands" :
+                    let commandsEmbed = {
+                        title: "==== Commands List ====" , 
+                        color : "#000000", 
+                        description: "List of commands you can use to interact with this bot .",
+                        author: auth, 
+                        thumbnail: thum, 
+                        fields:{
+                            name : "==== Commands ====", 
+                            value: [
+                                "+act",
+                                "+reply",
+                                "+link",
+                                "+roles",
+                                "+members",
+                                "+commands",
+                                // "+avatar"
+                            ]
+                        }, 
+                        date : new Date(), 
+                        footer: foot
+                    }
+                    channel.send({
+                        embed: commandsEmbed
+                    })
+                    break ;
+                    
             }
             break; 
     }
