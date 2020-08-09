@@ -3,7 +3,7 @@ const discord = require("discord.js");
 
 const client = new discord.Client();
 
-const token = "bot's token."; 
+const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.7LYzFEoJgdQ_ronohVV-0TZ6zEA"; 
 
 const PLAYING_WITH = "with";
 
@@ -22,6 +22,8 @@ const ACTIVITY = [
 
 const INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=740257045260927037&permissions=2147483639&scope=bot";
 let auth = thum = foot =  {};
+let commands = []; 
+// initializing objects and setting bot's activities.
 client.on("ready", message => {
     auth  = {
         name: client.user.username, 
@@ -35,6 +37,21 @@ client.on("ready", message => {
         text: 'cheers',
         icon_url: client.user.displayAvatarURL(),
     };
+    
+    commands = [
+        "+reply",
+        "+avatar",
+        "+activate",
+        "+link",
+        "+roles",
+        "+members",
+        "+commands",
+        // "+reply",
+        // "+reply",
+        // "+reply",
+        // "+reply",
+        // "+reply",
+    ]
     // every 20 secounds the bot chenges its activity. 
     setInterval( () => {
         client.user.setActivity(`${PLAYING_WITH} ${ACTIVITY[Math.floor(Math.random() * 10)]}` );
@@ -43,6 +60,7 @@ client.on("ready", message => {
     console.log("bot is ready.");
 });
     
+
 let user = {
     username : '', 
     guild: null,
@@ -50,19 +68,21 @@ let user = {
     intendedReply: 0,
 }
 
-
-
 client.on('message', message => {
+
     let channel = message.channel, 
         author = message.author, 
         guild = message.guild; 
 
     let msg = message.content.split(" "); 
-
+    
+    //check if the message sent to a text channel or to the bot's DMs
     switch (message.channel.type) {
         case "dm" : 
             switch (msg[0]){
-                case '+reply' : 
+
+                // Reply .
+                case commands[0] : 
                     if(!author.bot && channel.type == 'dm'  && message.author.username == user.username  ){
                         if(user.intendedReply == msg[1]){
                             
@@ -106,8 +126,9 @@ client.on('message', message => {
             break; 
         case 'text' : 
             switch(msg[0]) {
-            
-                case '+avatar' :  
+
+                // Avatar request
+                case commands[1] :  
                     if(msg[1] == null){
                         // display the avatar of the one who typed the command.
         
@@ -124,6 +145,7 @@ client.on('message', message => {
                             image: {
                                 url:  author.avatarURL() + "?size=1024"
                             },
+                            timestamp: new Date(),
                             footer: {
                                 text:  `requested by ${author.username}`, 
                                 icon_url: author.displayAvatarURL()
@@ -155,9 +177,10 @@ client.on('message', message => {
                             image: {
                                 url:  member.user.avatarURL() + "?size=1024"
                             },
+                            timestamp: new Date(),
                             footer: {
-                                text:  `requested by ${member.user.username}`, 
-                                icon_url: member.user.displayAvatarURL()
+                                text:  `requested by ${author.username}`, 
+                                icon_url: author.displayAvatarURL()
                             }
                         }
         
@@ -172,7 +195,8 @@ client.on('message', message => {
                     
                     break ; 
         
-                case '+act': 
+                // activate 
+                case commands[2]: 
                     if( user.intendedReply == 0 ){
                         user.randomNumbers = [
                             Math.floor(Math.random() * 10) + 1, 
@@ -210,12 +234,14 @@ client.on('message', message => {
                         embed : questionEmbed
                     });
                     break ; 
-                    
-                case '+link':
+                
+                //   Link
+                case commands[3]:
                     channel.send(INVITE_LINK); 
                     break ; 
-        
-                case '+roles':
+               
+                // Roles
+                case commands[4] :
                     // display all the roles in aparticular server. 
                     let rolesString = [];    
         
@@ -256,8 +282,9 @@ client.on('message', message => {
                         
                     channel.send({embed: roles});
                     break ;  
-        
-                case "+members" : 
+               
+                // Members
+                case commands[5] : 
                     let members = [];
                     
                     guild.members.cache.forEach( 
@@ -298,8 +325,9 @@ client.on('message', message => {
                         embed : membersEmbed
                     })
                     break ; 
-                   
-                case "+commands" :
+               
+                // commands 
+                case commands[6] :
                     let commandsEmbed = {
                         title: "==== Commands List ====" , 
                         color : "#000000", 
@@ -308,15 +336,7 @@ client.on('message', message => {
                         thumbnail: thum, 
                         fields:{
                             name : "==== Commands ====", 
-                            value: [
-                                "+act",
-                                "+reply",
-                                "+link",
-                                "+roles",
-                                "+members",
-                                "+commands",
-                                // "+avatar"
-                            ]
+                            value: commands
                         }, 
                         date : new Date(), 
                         footer: foot
