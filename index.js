@@ -1,9 +1,10 @@
 
 const discord = require("discord.js");
+// import "./guildMemberAdd.js"; 
 
 const client = new discord.Client();
 
-const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.7LYzFEoJgdQ_ronohVV-0TZ6zEA"; 
+const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.MoeuXsZI5Ninbb-Xi-qsz9bGH9k"; 
 
 const PLAYING_WITH = "with";
 
@@ -23,6 +24,7 @@ const ACTIVITY = [
 const INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=740257045260927037&permissions=2147483639&scope=bot";
 let auth = thum = foot =  {};
 let commands = []; 
+
 // initializing objects and setting bot's activities.
 client.on("ready", message => {
     auth  = {
@@ -39,18 +41,34 @@ client.on("ready", message => {
     };
     
     commands = [
-        "+reply",
-        "+avatar",
-        "+activate",
-        "+link",
-        "+roles",
-        "+members",
-        "+commands",
-        // "+reply",
-        // "+reply",
-        // "+reply",
-        // "+reply",
-        // "+reply",
+        {
+            name : "+reply", 
+            value: "type this to the bot's dm To reply to the bot verification test. "
+        },
+        {
+            name : "+avatar", 
+            value: "To see your avatar or another user's avatar . "
+        },
+        {
+            name : "+activate", 
+            value: "type this on the server text channels To verify your account and et the 'Members' Role . "
+        },
+        {
+            name : "+link", 
+            value: "type this on the server text channels to get the bot's invite link. "
+        },
+        {
+            name : "+roles", 
+            value: "type this on the server text channels To get this servers Role list. "
+        },
+        {
+            name : "+members", 
+            value: "type this on the server text channels To get this server's Members List. "
+        },
+        {
+            name : "+commands", 
+            value: "type this on the server text channels To get this bot's Commands List . "
+        },
     ]
     // every 20 secounds the bot chenges its activity. 
     setInterval( () => {
@@ -60,13 +78,33 @@ client.on("ready", message => {
     console.log("bot is ready.");
 });
     
-
 let user = {
     username : '', 
     guild: null,
     randomNumbers : [],
     intendedReply: 0,
 }
+
+client.on('guildMemberAdd', member => {
+	const channel = member.guild.channels.cache.find(ch => ch.name === 'verify-your-account');
+    if (!channel) return;
+    
+    let commandsEmbed = {
+        title: "==== Commands List ====" , 
+        color : "#000000", 
+        description: "List of commands you can use to interact with this bot .",
+        author: auth, 
+        thumbnail: thum, 
+        fields:  [{ name: '\u200B', value: '\u200B' },commands, { name: '\u200B', value: '\u200B' }], 
+        date : new Date(), 
+        footer: foot
+    }; 
+
+    member.send({
+        embed: commandsEmbed
+    });
+	// member.send();
+});
 
 client.on('message', message => {
 
@@ -80,10 +118,12 @@ client.on('message', message => {
     switch (message.channel.type) {
         case "dm" : 
             switch (msg[0]){
-
                 // Reply .
-                case commands[0] : 
+                case commands[0].name : 
                     if(!author.bot && channel.type == 'dm'  && message.author.username == user.username  ){
+                        
+                     
+
                         if(user.intendedReply == msg[1]){
                             
                             const role = client.guilds.cache.first().roles.cache.find( role => role.name === "Member");
@@ -102,6 +142,11 @@ client.on('message', message => {
                                 thumbnail: {
                                     url: client.user.displayAvatarURL()
                                 }, 
+                                fields:  [
+                                    { name: '\u200B', value: '\u200B' },
+                                    { name: 'Here the commands you can use', value: "======================="}, 
+                                    commands, 
+                                    { name: '\u200B', value: '\u200B' }],
                                 timestamp: new Date(),
                                 footer: {
                                     text: 'cheers',
@@ -128,10 +173,11 @@ client.on('message', message => {
             switch(msg[0]) {
 
                 // Avatar request
-                case commands[1] :  
+                case commands[1].name :  
+                    
+                    // display the avatar of the one who typed the command.
                     if(msg[1] == null){
-                        // display the avatar of the one who typed the command.
-        
+                        
                         // display the member's avatar. 
                         let avatarEmbed = {
                             title: "Avatar Link", 
@@ -164,30 +210,28 @@ client.on('message', message => {
                         if( typeof(member) === 'undefined' ){
                             channel.send("can't find this user.");
                         }else{
-        
-                        // display the member's avatar. 
-                        let avatarEmbed = {
-                            title: "Avatar Link", 
-                            url: member.user.avatarURL() + "?size=1024",
-                            author: {
-                                name: member.user.username, 
-                                icon_url: member.user.displayAvatarURL(), 
-                                url: member.user.displayAvatarURL()
-                            },
-                            image: {
-                                url:  member.user.avatarURL() + "?size=1024"
-                            },
-                            timestamp: new Date(),
-                            footer: {
-                                text:  `requested by ${author.username}`, 
-                                icon_url: author.displayAvatarURL()
+                            // display the member's avatar. 
+                            let avatarEmbed = {
+                                title: "Avatar Link", 
+                                url: member.user.avatarURL() + "?size=1024",
+                                author: {
+                                    name: member.user.username, 
+                                    icon_url: member.user.displayAvatarURL(), 
+                                    url: member.user.displayAvatarURL()
+                                },
+                                image: {
+                                    url:  member.user.avatarURL() + "?size=1024"
+                                },
+                                timestamp: new Date(),
+                                footer: {
+                                    text:  `requested by ${author.username}`, 
+                                    icon_url: author.displayAvatarURL()
+                                }
                             }
-                        }
-        
-                        channel.send({
-                            embed: avatarEmbed
-                        }); 
-        
+            
+                            channel.send({
+                                embed: avatarEmbed
+                            }); 
                         }
                         
                                     
@@ -196,7 +240,37 @@ client.on('message', message => {
                     break ; 
         
                 // activate 
-                case commands[2]: 
+                case commands[2].name: 
+
+                    // checking if the user is already a member .
+                    let counter     = 0 ; 
+                    let userRole    = guild.members.cache.find(m  => m.id === author.id )._roles; 
+                    let memberRole  = guild.roles.cache.find(role => role.name === "Member");
+                    
+                    userRole.forEach( role => {
+                        if (role == memberRole.id) 
+                            counter++; 
+                    });
+
+                    if(counter != 0 ) {
+                       let alreadyMember =  {
+                            color: '#D90000',
+                            title: "You're Already a member.", 
+                            author : auth,
+                            thumbnail: {
+                                url: client.user.displayAvatarURL()
+                            }, 
+                            description: "Only new members can use this command"
+                        }
+                        channel.send({
+                            embed: alreadyMember
+                        });
+                        counter = 0 ; 
+                        return ;
+                    }
+                    // end of checking. 
+
+                    
                     if( user.intendedReply == 0 ){
                         user.randomNumbers = [
                             Math.floor(Math.random() * 10) + 1, 
@@ -204,10 +278,10 @@ client.on('message', message => {
                         ]
                     }
                     
-                    user.username = message.author.username; 
-                    user.guild = guild;
-                    user.question = `${user.randomNumbers[0]} + ${user.randomNumbers[1]} = ?`;
-                    user.intendedReply = user.randomNumbers[0] + user.randomNumbers[1];
+                    user.username       = message.author.username; 
+                    user.guild          = guild;
+                    user.question       = `${user.randomNumbers[0]} + ${user.randomNumbers[1]} = ?`;
+                    user.intendedReply  = user.randomNumbers[0] + user.randomNumbers[1];
         
         
                     let questionEmbed = {
@@ -236,12 +310,12 @@ client.on('message', message => {
                     break ; 
                 
                 //   Link
-                case commands[3]:
+                case commands[3].name:
                     channel.send(INVITE_LINK); 
                     break ; 
                
                 // Roles
-                case commands[4] :
+                case commands[4].name :
                     // display all the roles in aparticular server. 
                     let rolesString = [];    
         
@@ -284,7 +358,7 @@ client.on('message', message => {
                     break ;  
                
                 // Members
-                case commands[5] : 
+                case commands[5].name : 
                     let members = [];
                     
                     guild.members.cache.forEach( 
@@ -327,17 +401,14 @@ client.on('message', message => {
                     break ; 
                
                 // commands 
-                case commands[6] :
+                case commands[6].name :
                     let commandsEmbed = {
                         title: "==== Commands List ====" , 
                         color : "#000000", 
                         description: "List of commands you can use to interact with this bot .",
                         author: auth, 
                         thumbnail: thum, 
-                        fields:{
-                            name : "==== Commands ====", 
-                            value: commands
-                        }, 
+                        fields:  [{ name: '\u200B', value: '\u200B' },commands, { name: '\u200B', value: '\u200B' }], 
                         date : new Date(), 
                         footer: foot
                     }
