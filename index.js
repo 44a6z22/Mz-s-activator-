@@ -4,7 +4,7 @@ const discord = require("discord.js");
 
 const client = new discord.Client();
 
-const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.MoeuXsZI5Ninbb-Xi-qsz9bGH9k"; 
+const token = "NzQwMjU3MDQ1MjYwOTI3MDM3.XymYGA.Z-HGQHe2NsvI6nfiAzpAtmnrYhU"; 
 
 const PLAYING_WITH = "with";
 
@@ -39,7 +39,6 @@ client.on("ready", message => {
         text: 'cheers',
         icon_url: client.user.displayAvatarURL(),
     };
-    
     commands = [
         {
             name : "+reply", 
@@ -70,6 +69,7 @@ client.on("ready", message => {
             value: "type this on the server text channels To get this bot's Commands List . "
         },
     ]
+    
     // every 20 secounds the bot chenges its activity. 
     setInterval( () => {
         client.user.setActivity(`${PLAYING_WITH} ${ACTIVITY[Math.floor(Math.random() * 10)]}` );
@@ -86,9 +86,7 @@ let user = {
 }
 
 client.on('guildMemberAdd', member => {
-	const channel = member.guild.channels.cache.find(ch => ch.name === 'verify-your-account');
-    if (!channel) return;
-    
+
     let commandsEmbed = {
         title: "==== Commands List ====" , 
         color : "#000000", 
@@ -106,6 +104,7 @@ client.on('guildMemberAdd', member => {
 	// member.send();
 });
 
+
 client.on('message', message => {
 
     let channel = message.channel, 
@@ -118,49 +117,38 @@ client.on('message', message => {
     switch (message.channel.type) {
         case "dm" : 
             switch (msg[0]){
+
                 // Reply .
                 case commands[0].name : 
                     if(!author.bot && channel.type == 'dm'  && message.author.username == user.username  ){
                         
-                     
-
                         if(user.intendedReply == msg[1]){
                             
                             const role = client.guilds.cache.first().roles.cache.find( role => role.name === "Member");
                             const member = user.guild.members.cache.get(author.id);
                             member.roles.add(role);
 
-                            let questionEmbed = {
+                            let congratsEmbed = {
                                 title : 'Verification complete',
-                                color: "#00FFEE", 
-                                author: {
-                                    name: client.user.username, 
-                                    icon_url: client.user.displayAvatarURL(), 
-                                    url: client.user.displayAvatarURL(),
-                                }, 
+                                color: "#22bb33",  // success. 
+                                author: auth, 
                                 description: "Congratulation you are now a Member",
-                                thumbnail: {
-                                    url: client.user.displayAvatarURL()
-                                }, 
+                                thumbnail: thum, 
                                 fields:  [
                                     { name: '\u200B', value: '\u200B' },
                                     { name: 'Here the commands you can use', value: "======================="}, 
                                     commands, 
                                     { name: '\u200B', value: '\u200B' }],
                                 timestamp: new Date(),
-                                footer: {
-                                    text: 'cheers',
-                                    icon_url: client.user.displayAvatarURL(),
-                                },
+                                footer: foot,
                             }
                             message.author.send({
-                                embed : questionEmbed
+                                embed : congratsEmbed
                             });
                             
-                                    // logic to greeding the user after verifying his/here account.
-                            let welcomeChannel = user.guild.channels.cache.find(channel => channel.id === '741979115690786889'); 
-                            welcomeChannel.send(`Welcome ${user.username} To the server`);
-
+                            // logic to greeding the user after verifying his/here account.
+                            let welcomeChannel = user.guild.channels.cache.find(channel => channel.name === 'welcome'); 
+                            greetUser(welcomeChannel, user.username);
                             
                         }else{
                             author.send("not quit right, try again");
@@ -168,7 +156,7 @@ client.on('message', message => {
                     }
                 break ;
             }
-            break; 
+        break; 
         case 'text' : 
             switch(msg[0]) {
 
@@ -243,15 +231,19 @@ client.on('message', message => {
                 case commands[2].name: 
 
                     // checking if the user is already a member .
-                    let counter     = 0 ; 
+                    let counter     = 0 ;
+                    // get the authors roles. 
                     let userRole    = guild.members.cache.find(m  => m.id === author.id )._roles; 
+                    // get a specific role. 
                     let memberRole  = guild.roles.cache.find(role => role.name === "Member");
                     
+                    // check if the user has that specific role
                     userRole.forEach( role => {
                         if (role == memberRole.id) 
                             counter++; 
                     });
 
+                    // if he does have the role tell them they are already a member. 
                     if(counter != 0 ) {
                        let alreadyMember =  {
                             color: '#D90000',
@@ -268,8 +260,9 @@ client.on('message', message => {
                         counter = 0 ; 
                         return ;
                     }
-                    // end of checking. 
-
+                    
+                    // if the user doesn't then do the verification.
+                     
                     
                     if( user.intendedReply == 0 ){
                         user.randomNumbers = [
@@ -309,7 +302,7 @@ client.on('message', message => {
                     });
                     break ; 
                 
-                //   Link
+                // Link
                 case commands[3].name:
                     channel.send(INVITE_LINK); 
                     break ; 
@@ -418,9 +411,14 @@ client.on('message', message => {
                     break ;
                     
             }
-            break; 
+        break; 
     }
    
 });
+
+function greetUser(channel,  username){
+    channel.send(`Welcome ${username} To the server`);
+}
+
 
 client.login(token);
