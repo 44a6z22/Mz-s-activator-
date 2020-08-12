@@ -25,7 +25,7 @@ const INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=74025704
 let auth = thum = foot =  {};
 let commands = []; 
 
-// initializing objects and setting bot's activities.
+// initializing objects and setting bot's activities and some object the  bot gonna use.
 client.on("ready", message => {
     auth  = {
         name: client.user.username, 
@@ -120,6 +120,7 @@ client.on('message', message => {
 
                 // Reply .
                 case commands[0].name : 
+
                     if(!author.bot && channel.type == 'dm'  && message.author.username == user.username  ){
                         
                         if(user.intendedReply == msg[1]){
@@ -150,11 +151,29 @@ client.on('message', message => {
                             let welcomeChannel = user.guild.channels.cache.find(channel => channel.name === 'welcome'); 
                             greetUser(welcomeChannel, user.username);
                             
-                        }else{
+                    }else{
                             author.send("not quit right, try again");
                         }
                     }
                 break ;
+                case "!notify":
+                    
+                    //only the bot owner can trigger this command .
+                    // the bot owner descriminator is hard coded up untill this point.
+                    if(message.author.discriminator == '1371'){
+                        client.guilds.cache.forEach( guild  => {
+                            guild.members.cache.forEach( member => {
+                                if(!member.user.bot  ){
+                                    member.send("lmao"); 
+                                }
+                                // console.log(member.user.bot)
+                            });
+                        }) 
+                    }else {
+                        message.author.send("how the fuck did you learn about this?");
+                    }
+                     
+                break; 
             }
         break; 
         case 'text' : 
