@@ -23,7 +23,7 @@ const ACTIVITY = [
 
 const INVITE_LINK = "https://discord.com/api/oauth2/authorize?client_id=740257045260927037&permissions=2147483639&scope=bot";
 let auth = thum = foot =  {};
-let commands = []; 
+let commands = [], customWelcomeChannelName = ''; 
 
 // initializing objects and setting bot's activities and some object the  bot gonna use.
 client.on("ready", message => {
@@ -148,7 +148,10 @@ client.on('message', message => {
                             });
                             
                             // logic to greeding the user after verifying his/here account.
-                            let welcomeChannel = user.guild.channels.cache.find(channel => channel.name === 'welcome'); 
+                            let welcomeChannel = user.guild.channels.cache.find(channel => channel.name === customWelcomeChannelName );
+                            if(!welcomeChannel){
+                                welcomeChannel = user.guild.channels.cache.find(channel => channel.name === 'general'); 
+                            } 
                             greetUser(welcomeChannel, user.username);
                             
                     }else{
@@ -156,19 +159,48 @@ client.on('message', message => {
                         }
                     }
                 break ;
+                
+                // notify 
                 case "!notify":
                     
                     //only the bot owner can trigger this command .
                     // the bot owner descriminator is hard coded up untill this point.
                     if(message.author.discriminator == '1371'){
-                        client.guilds.cache.forEach( guild  => {
-                            guild.members.cache.forEach( member => {
-                                if(!member.user.bot  ){
+                        if(msg[1] != null ){
+                            let thisGuild = client.guilds.cache.find(guild => guild.name == msg[1]); 
+                            thisGuild.members.cache.forEach( member => {
+                                if(!member.user.bot ){
                                     member.send("lmao"); 
+                                     let congratsEmbed = {
+                                        title : 'Verification complete',
+                                        color: "#22bb33",  // success. 
+                                        author: auth, 
+                                        description: "Congratulation you are now a Member",
+                                        thumbnail: thum, 
+                                        fields:  [
+                                            { name: '\u200B', value: '\u200B' },
+                                            { name: 'Here the commands you can use', value: "======================="}, 
+                                            commands, 
+                                            { name: '\u200B', value: '\u200B' }],
+                                        timestamp: new Date(),
+                                        footer: foot,
+                                    }
+                                    message.author.send({
+                                        embed : congratsEmbed
+                                    });
                                 }
-                                // console.log(member.user.bot)
                             });
-                        }) 
+                        }else{
+                            client.guilds.cache.forEach( guild  => {
+                                guild.members.cache.forEach( member => {
+                                    if(!member.user.bot  ){
+                                        member.send("lmao"); 
+                                    }
+                                    // console.log(member.user.bot)
+                                });
+                            });
+                        }
+                         
                     }else {
                         message.author.send("how the fuck did you learn about this?");
                     }
@@ -231,7 +263,7 @@ client.on('message', message => {
                                 },
                                 timestamp: new Date(),
                                 footer: {
-                                    text:  `requested by ${author.username}`, 
+                                    text:  `requested by ${author.username} ${author.discriminator}`, 
                                     icon_url: author.displayAvatarURL()
                                 }
                             }
